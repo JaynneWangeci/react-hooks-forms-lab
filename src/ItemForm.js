@@ -5,6 +5,14 @@ function ItemForm({ onItemFormSubmit }) {
   const [name, setName] = useState("");
   const [category, setCategory] = useState("Produce");
 
+  function handleNameChange(event) {
+    setName(event.target.value);
+  }
+
+  function handleCategoryChange(event) {
+    setCategory(event.target.value);
+  }
+
   function handleSubmit(event) {
     event.preventDefault();
 
@@ -15,6 +23,8 @@ function ItemForm({ onItemFormSubmit }) {
     };
 
     onItemFormSubmit(newItem);
+
+    // Reset form fields
     setName("");
     setCategory("Produce");
   }
@@ -27,7 +37,7 @@ function ItemForm({ onItemFormSubmit }) {
           type="text"
           name="name"
           value={name}
-          onChange={(e) => setName(e.target.value)}
+          onChange={handleNameChange}
         />
       </label>
 
@@ -36,7 +46,7 @@ function ItemForm({ onItemFormSubmit }) {
         <select
           name="category"
           value={category}
-          onChange={(e) => setCategory(e.target.value)}
+          onChange={handleCategoryChange}
         >
           <option value="Produce">Produce</option>
           <option value="Dairy">Dairy</option>
@@ -44,7 +54,7 @@ function ItemForm({ onItemFormSubmit }) {
         </select>
       </label>
 
-      <button type="submit">Add to List</button>
+      <button type="submit">Add Item</button>
     </form>
   );
 }

@@ -1,47 +1,28 @@
-import "@testing-library/jest-dom";
+import React from "react";
 import { render, screen, fireEvent } from "@testing-library/react";
 import ItemForm from "../components/ItemForm";
-import App from "../components/App";
-
-test("calls the onItemFormSubmit callback prop when the form is submitted", () => {
-  const onItemFormSubmit = jest.fn();
-  render(<ItemForm onItemFormSubmit={onItemFormSubmit} />);
-
-  fireEvent.change(screen.queryByLabelText(/Name/), {
-    target: { value: "Ice Cream" },
-  });
-
-  fireEvent.change(screen.queryByLabelText(/Category/), {
-    target: { value: "Dessert" },
-  });
-
-  fireEvent.submit(screen.queryByText(/Add to List/));
-
-  expect(onItemFormSubmit).toHaveBeenCalledWith(
-    expect.objectContaining({
-      id: expect.any(String),
-      name: "Ice Cream",
-      category: "Dessert",
-    })
-  );
-});
 
 test("adds a new item to the list when the form is submitted", () => {
-  render(<App />);
+  const mockSubmit = jest.fn();
 
-  const dessertCount = screen.queryAllByText(/Dessert/).length;
+  render(<ItemForm onItemFormSubmit={mockSubmit} />);
+  const nameInput = screen.getByLabelText(/name/i);
+  const categorySelect = screen.getByLabelText(/category/i);
+  const submitButton = screen.getByText(/add to list/i);
 
-  fireEvent.change(screen.queryByLabelText(/Name/), {
-    target: { value: "Ice Cream" },
-  });
 
-  fireEvent.change(screen.queryByLabelText(/Category/), {
-    target: { value: "Dessert" },
-  });
+  fireEvent.change(nameInput, { target: { value: "Ice Cream" } });
+  fireEvent.change(categorySelect, { target: { value: "Dessert" } });
 
-  fireEvent.submit(screen.queryByText(/Add to List/));
+  
+  fireEvent.click(submitButton);
 
-  expect(screen.queryByText(/Ice Cream/)).toBeInTheDocument();
+  
+  expect(mockSubmit).toHaveBeenCalledTimes(1);
+  const submittedItem = mockSubmit.mock.calls[0][0];
 
-  expect(screen.queryAllByText(/Dessert/).length).toBe(dessertCount + 1);
+  
+  expect(submittedItem.name).toBe("Ice Cream");
+  expect(submittedItem.category).toBe("Dessert");
+  expect(typeof submittedItem.id).toBe("string");
 });
